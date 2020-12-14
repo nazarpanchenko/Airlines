@@ -1,0 +1,9 @@
+@import '../../styles/variables';
+
+.no-flights {
+    align-items: center;
+    padding: $section-padding;
+    margin-top: 20px;
+    font-size: 1.25rem;
+    font-weight: 800;
+}

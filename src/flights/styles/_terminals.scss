@@ -1,0 +1,20 @@
+$colors: (
+    'A': #59c946,
+    'B': #ca1483,
+    'D': #2bb4ee
+);
+
+@each $terminal, $color in $colors {
+    [data-terminal] {
+        display: inline-block;
+        padding: 8px 16px;
+        border-width: 2px;
+        border-style: solid;
+        border-radius: 100%;
+    }
+
+    [data-terminal='#{$terminal}'] {
+        color: $color;
+        border-color: $color;
+    }
+}

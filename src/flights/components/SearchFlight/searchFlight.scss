@@ -1,0 +1,64 @@
+@import '../../styles/variables';
+
+$padding: 15px;
+$padding-right: 25px;
+
+.flights__search-form {
+    padding: $section-padding;
+    font-size: 1.25rem;
+
+    &_input-wrapper {
+        flex-basis: 500px;
+        padding: $padding;
+        background-color: #fff;
+
+        &.error-message {
+            border-color: $error-color;
+        }
+
+        ::placeholder {
+            color: $title-color;
+        }
+    }
+
+    &_input-wrapper.error-message {
+        .fa-search {
+            visibility: hidden;
+        }
+
+        ::placeholder {
+            font-size: 0.75rem;
+            color: $error-color;
+        }
+    }
+
+    .fa-search {
+        color: $title-color;
+    }
+
+    &_search-input {
+        width: 455px;
+        margin-left: 15px;
+        border: none;
+        outline: none;
+    }
+
+    &_search-btn {
+        padding: $padding $padding-right $padding $padding;
+        background-color: $btn-bg;
+        text-transform: uppercase;
+        border-width: 1px;
+        border-style: solid;
+        border-color: transparent;
+        border-top-right-radius: $padding-right;
+        outline: none;
+        color: $btn-color;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.25s ease-in-out;
+
+        &:hover {
+            border-top-right-radius: 1rem;
+        }
+    }
+}

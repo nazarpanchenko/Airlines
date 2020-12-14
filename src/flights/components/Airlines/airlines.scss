@@ -1,0 +1,17 @@
+@import '../../styles/variables';
+
+main {
+    padding: $section-padding;
+}
+
+.flights {
+    h1 {
+        font-size: 3rem;
+        font-weight: 100;
+        text-transform: uppercase;
+        text-align: center;
+        color: $title-color;
+        letter-spacing: 3px;
+        margin-bottom: 20px;
+    }
+}

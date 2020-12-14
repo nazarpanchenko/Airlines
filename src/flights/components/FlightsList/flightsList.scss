@@ -1,0 +1,57 @@
+@import '../../styles/variables';
+@import '../../styles/terminals';
+
+$grid-cell: 150px;
+
+.flights-list-wrapper {
+    padding: $section-padding;
+    background-color: #fff;
+}
+
+.flights-list {
+    &__titles-list {
+        padding: 30px 15px 10px;
+
+        &_title {
+            width: $grid-cell;
+            color: $title-color;
+        }
+
+        &_title:not(:last-of-type) {
+            margin-right: $grid-margin;
+        }
+    }
+}
+
+.flights-list__item {
+    padding: 15px;
+
+    & > * {
+        width: $grid-cell;
+
+        &:not(:last-child) {
+            margin-right: $grid-margin;
+        }
+    }
+
+    &_airline {
+        align-items: flex-start;
+
+        &-logo,
+        &_name {
+            width: 60px;
+        }
+
+        &-logo {
+            margin-right: $grid-margin;
+        }
+    }
+
+    &:nth-child(even) {
+        background-color: $flights-theme;
+    }
+
+    &:nth-child(odd) {
+        background-color: #fff;
+    }
+}
