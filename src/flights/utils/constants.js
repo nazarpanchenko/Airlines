@@ -8,6 +8,7 @@ const flt = {
     ARRIVAL_CITY_NAME: 'airportFromID.name',
     PLANE_NUMBER: 'fltNo',
     PLANE_ID: 'planeTypeID.code',
+    FLIGHT_DATE: 'timeLandFact'
 };
 
 export const TODAY_DATE = moment().format();

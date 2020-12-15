@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import './searchFlight.scss';
 import isValidFormat from '../../utils/validators';
+import { Link } from 'react-router-dom';
 
 class SearchFlight extends Component {
     state = {
@@ -24,29 +25,34 @@ class SearchFlight extends Component {
         });
     };
 
-    handleInputChange = event => {
-        this.setState({ searchText: event.target.value });
-    };
-
-    handleFlightSearch = event => {
-        event.preventDefault();
-
-        const { searchText } = this.state;
-        const validPropName = isValidFormat(searchText);
-
-        if (validPropName) {
-            this.props.getFlightsBySearch(validPropName, searchText);
+    checkValidity = (validSearchType, searchText) => {
+        if (validSearchType) {
+            this.props.searchFlights(validSearchType, searchText);
             this.clearForm();
         } else {
             this.showErrMessage();
         }
     };
 
+    handleInputChange = event => {
+        this.setState({ searchText: event.target.value });
+    };
+
+    handleFlightSearch = event => {
+        const { searchText } = this.state;
+
+        let searchType = isValidFormat(searchText);
+
+        // if search query is invalid, block fetching flights
+        searchType = searchType ? searchType : event.preventDefault();
+        this.checkValidity(searchType, searchText);
+    };
+
     render() {
         const { searchText, errMessage } = this.state;
 
         const errClassName = errMessage ? 'error-message' : '';
-        const placeholder = errMessage
+        const placeholder = errClassName
             ? errMessage
             : 'Airline, destination or flight #';
 
@@ -57,7 +63,7 @@ class SearchFlight extends Component {
                     <form className="flex flex-center flights__search-form">
                         <div
                             className={classNames(
-                                `flex flights__search-form_input-wrapper ${errClassName}`
+                                `flex flights__search-form_input-wrapper no-border ${errClassName}`
                             )}
                         >
                             <i className="fa fa-search"></i>
@@ -71,13 +77,16 @@ class SearchFlight extends Component {
                                 }
                             />
                         </div>
-
-                        <button
-                            className="flights__search-form_search-btn no-border"
-                            onClick={event => this.handleFlightSearch(event)}
-                        >
-                            search
-                        </button>
+                        <Link to="/flights/:departures">
+                            <button
+                                className="flights__search-form_search-btn no-border"
+                                onClick={event =>
+                                    this.handleFlightSearch(event)
+                                }
+                            >
+                                search
+                            </button>
+                        </Link>
                     </form>
                 </div>
             </main>
@@ -86,7 +95,7 @@ class SearchFlight extends Component {
 }
 
 SearchFlight.propTypes = {
-    getFlightsBySearch: PropTypes.func.isRequired
+    searchFlights: PropTypes.func.isRequired
 };
 
 export default SearchFlight;

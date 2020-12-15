@@ -1,7 +1,9 @@
-const baseUrl = 'https://api.iev.aero/api/flights';
+import { TODAY_DATE } from './utils/constants';
 
-export const fetchFlightsList = todayDate => {
-    return fetch(`${baseUrl}/${todayDate}`).then(response => {
+const baseUrl = `https://api.iev.aero/api/flights/${TODAY_DATE}`;
+
+export const fetchFlightsList = () => {
+    return fetch(baseUrl).then(response => {
         if (response.ok) {
             return response.json();
         }

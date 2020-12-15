@@ -8,89 +8,93 @@ import FlightsList from '../FlightsList/FlightsList';
 import * as flightsActions from '../../flights.action';
 
 import { filteredFlightsListSelector } from '../../flights.selectors';
-import flt, { TODAY_DATE } from '../../utils/constants';
+import flt from '../../utils/constants';
+import NoFlights from '../NoFlights/NoFlights';
+import { BrowserRouter as Router, Route, Redirect } from 'react-router-dom';
 
 class Airlines extends Component {
     state = {
-        listSelected: null,
-        searchMode: null,
-        searchText: '',
-        searchPropName: ''
+        listSelected: null
     };
 
-    getFlightsBySearch = (propName, text) => {
-        // let user use both uppercase and lowercase letters for city search
-        const { listSelected } = this.state;
-        const upperCaseSearch = text.charAt(0).toUpperCase() + text.slice(1);
+    componentDidMount() {
+        this.props.getFlightsList(flt.DEPARTURES);
+    }
 
-        const selectedList =
+    replaceSearchType = searchType =>
+        searchType === flt.DEPARTURE_CITY_NAME
+            ? flt.ARRIVAL_CITY_NAME
+            : searchType;
+
+    checkFlightStatus = () => {
+        const { listSelected } = this.state;
+        const flightStatus =
             listSelected === flt.DEPARTURES
                 ? flt.DEPARTURES
                 : listSelected === flt.ARRIVALS
                 ? flt.ARRIVALS
                 : flt.DEPARTURES;
 
-        const updatedPropName =
-            propName === flt.DEPARTURE_CITY_NAME
-                ? flt.ARRIVAL_CITY_NAME
-                : propName;
+        return flightStatus;
+    };
 
-        this.props.getFlightsBySearch(
-            selectedList,
-            TODAY_DATE,
-            propName,
-            upperCaseSearch
-        );
-        this.setState({
-            searchMode: true,
-            listSelected: listSelected,
-            searchPropName: updatedPropName,
-            searchText: upperCaseSearch
-        });
+    searchFlights = (searchType, searchText) => {
+        const { getTodayDepartures, getTodayArrivals } = this.props;
+
+        // let user type both uppercase and lowercase letters for city search
+        const upperCaseSearch =
+            searchText.charAt(0).toUpperCase() + searchText.slice(1);
+
+        const flightStatus = this.checkFlightStatus();
+
+        if (flightStatus === flt.DEPARTURES) {
+            getTodayDepartures(searchType, upperCaseSearch);
+        } else {
+            const replacedSearchType = this.replaceSearchType(searchType);
+            getTodayArrivals(replacedSearchType, upperCaseSearch);
+        }
+
+        this.setState({ listSelected: flightStatus });
     };
 
     handleListToggle = event => {
-        const { searchMode, searchText, searchPropName } = this.state;
         const { classList } = event.currentTarget;
-
         const selectedList = classList.contains('departures-btn')
             ? flt.DEPARTURES
             : classList.contains('arrivals-btn')
             ? flt.ARRIVALS
             : flt.DEPARTURES;
 
-        if (searchMode && selectedList === flt.ARRIVALS) {
-            this.props.getFlightsBySearch(
-                flt.ARRIVALS,
-                TODAY_DATE,
-                searchPropName,
-                searchText
-            );
-        } else {
-            this.props.getFlightsList(selectedList, TODAY_DATE);
-        }
-
-        this.setState({
-            listSelected: selectedList,
-            searchMode: false
-        });
+        this.props.getFlightsList(selectedList);
+        this.setState({ listSelected: selectedList });
     };
 
     render() {
-        const { listSelected, searchMode } = this.state;
+        const { listSelected } = this.state;
         const { flights } = this.props;
 
         return (
-            <>
-                <SearchFlight getFlightsBySearch={this.getFlightsBySearch} />
-                <Buttons
-                    handleListToggle={this.handleListToggle}
-                    listSelected={listSelected}
-                />
-                {listSelected || searchMode ? (
-                    <FlightsList flightsList={flights} />
-                ) : null}
-            </>
+            <Router>
+                <Route path="/">
+                    <SearchFlight searchFlights={this.searchFlights} />
+                </Route>
+                <Route path="/">
+                    <Buttons
+                        handleListToggle={this.handleListToggle}
+                        listSelected={listSelected}
+                    />
+                </Route>
+                <Route path="/flights">
+                    {flights.length ? (
+                        <FlightsList flightsList={flights} />
+                    ) : (
+                        <Redirect to="/no-flights" />
+                    )}
+                </Route>
+                <Route path="/no-flights">
+                    <NoFlights />
+                </Route>
+            </Router>
         );
     }
 }
@@ -98,7 +102,8 @@ class Airlines extends Component {
 Airlines.propTypes = {
     flights: PropTypes.arrayOf(PropTypes.shape()),
     getFlightsList: PropTypes.func.isRequired,
-    getFlightsBySearch: PropTypes.func.isRequired
+    getTodayDepartures: PropTypes.func.isRequired,
+    getTodayArrivals: PropTypes.func.isRequired
 };
 
 Airlines.defaultProps = {
@@ -113,7 +118,8 @@ const mapState = state => {
 
 const mapDispatch = {
     getFlightsList: flightsActions.getFlightsList,
-    getFlightsBySearch: flightsActions.getFlightsBySearch
+    getTodayDepartures: flightsActions.getTodayDepartures,
+    getTodayArrivals: flightsActions.getTodayArrivals
 };
 
 export default connect(mapState, mapDispatch)(Airlines);

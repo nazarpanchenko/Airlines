@@ -1,4 +1,8 @@
-import { FLIGHTS_LIST_RECEIVED, FOUND_FLIGHTS_RECEIVED } from './flights.action';
+import { FLIGHTS_LIST_RECEIVED, 
+    TODAY_DEPARTURES_RECEIVED, 
+    TODAY_ARRIVALS_RECEIVED } 
+from './flights.action';
+
 import flt from './utils/constants';
 
 const initialData = {
@@ -23,15 +27,27 @@ const flightsReducer = (state = initialData, action) => {
                 }
             }
         };
-        case FOUND_FLIGHTS_RECEIVED: {
-            const { flightsList } = action.payload;
+        case TODAY_DEPARTURES_RECEIVED: {
+            const { foundDepartures } = action.payload;
             return {
                 ...state,
                 flightsList: {
                     ...state.flightsList,
-                    departures: flightsList,
+                    departures: foundDepartures,
                     arrivals: [],
                     selectedList: flt.DEPARTURES
+                }
+            }
+        };
+        case TODAY_ARRIVALS_RECEIVED: {
+            const { foundArrivals } = action.payload;
+            return {
+                ...state,
+                flightsList: {
+                    ...state.flightsList,
+                    departures: [],
+                    arrivals: foundArrivals,
+                    selectedList: flt.ARRIVALS
                 }
             }
         };
